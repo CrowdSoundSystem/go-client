@@ -4,9 +4,9 @@ import (
 	"io"
 	"log"
 
-	"golang.org/x/net/context"
+	"github.com/crowdsoundsystem/go-client/pkg/crowdsound"
 
-	"github.com/mfycheng/crowdsound/pkg/crowdsound"
+	"golang.org/x/net/context"
 
 	"google.golang.org/grpc"
 )
