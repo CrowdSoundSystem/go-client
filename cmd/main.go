@@ -27,7 +27,7 @@ func printSongs(client crowdsound.CrowdSoundClient) {
 
 	log.Println("Retrieving songs...")
 
-	stream, err := client.ListSongs(context.Background(), &crowdsound.ListSongsRequest{})
+	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
 	if err != nil {
 		log.Fatalf("Error calling ListSongs(): %v", err)
 	}
@@ -41,7 +41,7 @@ func printSongs(client crowdsound.CrowdSoundClient) {
 			log.Fatalf("Error retrieving song: %v", err)
 		}
 
-		log.Println("Song:", song)
+		log.Printf("Song: [%v] %v - %v", song.Genre, song.Artist, song.Name)
 	}
 }
 
