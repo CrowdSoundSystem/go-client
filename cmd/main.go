@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"io"
 	"log"
 
@@ -12,14 +14,17 @@ import (
 )
 
 var (
-	address = "cs.ephyra.io:50051"
-	songs   = []*crowdsound.PostSongRequest{
+	host  = flag.String("host", "localhost", "Hostname of the service")
+	port  = flag.Int("port", 50051, "Port of the service")
+	songs = []*crowdsound.PostSongRequest{
 		&crowdsound.PostSongRequest{Name: "Romeo", Artist: "Taylor Swift", Genre: "Country"},
 		&crowdsound.PostSongRequest{Name: "Gay Fish", Artist: "Kanye West", Genre: "Rap"},
 	}
 )
 
 func printSongs(client crowdsound.CrowdSoundClient) {
+	flag.Parse()
+
 	log.Println("Retrieving songs...")
 
 	stream, err := client.ListSongs(context.Background(), &crowdsound.ListSongsRequest{})
@@ -57,7 +62,7 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 }
 
 func main() {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(fmt.Sprintf("%v:%v", *host, *port), grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("unable to connect: %v", err)
 	}
