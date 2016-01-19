@@ -23,8 +23,6 @@ var (
 )
 
 func printSongs(client crowdsound.CrowdSoundClient) {
-	flag.Parse()
-
 	log.Println("Retrieving songs...")
 
 	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
@@ -62,6 +60,8 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 }
 
 func main() {
+	flag.Parse()
+
 	conn, err := grpc.Dial(fmt.Sprintf("%v:%v", *host, *port), grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("unable to connect: %v", err)
