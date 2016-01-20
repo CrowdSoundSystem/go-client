@@ -14,20 +14,19 @@ import (
 )
 
 var (
-	host  = flag.String("host", "localhost", "Hostname of the service")
-	port  = flag.Int("port", 50051, "Port of the service")
-	songs = []*crowdsound.PostSongRequest{
+	host    = flag.String("host", "localhost", "Hostname of the service")
+	port    = flag.Int("port", 50051, "Port of the service")
+	command = flag.String("cmd", "queue", "Command to execute")
+	songs   = []*crowdsound.PostSongRequest{
 		&crowdsound.PostSongRequest{Name: "Romeo", Artist: "Taylor Swift", Genre: "Country"},
 		&crowdsound.PostSongRequest{Name: "Gay Fish", Artist: "Kanye West", Genre: "Rap"},
 	}
 )
 
-func printSongs(client crowdsound.CrowdSoundClient) {
-	log.Println("Retrieving songs...")
-
+func printQueue(client crowdsound.CrowdSoundClient) {
 	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
 	if err != nil {
-		log.Fatalf("Error calling ListSongs(): %v", err)
+		log.Fatalf("Error calling GetQueue(): %v", err)
 	}
 
 	for {
@@ -44,8 +43,6 @@ func printSongs(client crowdsound.CrowdSoundClient) {
 }
 
 func postSongs(client crowdsound.CrowdSoundClient) {
-	log.Println("Posting songs...")
-
 	stream, err := client.PostSong(context.Background())
 	if err != nil {
 		log.Fatalf("Error calling PostSong(): %v", err)
@@ -70,6 +67,14 @@ func main() {
 
 	c := crowdsound.NewCrowdSoundClient(conn)
 
-	postSongs(c)
-	printSongs(c)
+	switch *command {
+	case "queue":
+		printQueue(c)
+		break
+	case "post":
+		postSongs(c)
+		break
+	default:
+		log.Println("Unrecognized command:", *command)
+	}
 }
