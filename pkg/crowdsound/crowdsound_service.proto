@@ -8,55 +8,68 @@ package CrowdSound;
 
 // Interface exported by the server.
 service CrowdSound {
+    // Ping sends a ping to the server to indicate the client is
+    // alive and connected.
+    rpc Ping(PingRequest) returns (PingResponse) {}
+
     // GetQueue streams the queue of songs (including what's currently playing).
-	rpc GetQueue(GetQueueRequest) returns (stream GetQueueResponse) {}
+    rpc GetQueue(GetQueueRequest) returns (stream GetQueueResponse) {}
 
     // ListTrendingArtists returns an ordered list of artists, based on trending
     // value.
     //
     // As with ListSongs, it is up to the client to control pagination and stream
     // termination (with the exception of end-of-stream).
-	rpc ListTrendingArtists(ListTrendingArtistsRequest) returns (stream ListTrendingArtistsResponse) {}
+    rpc ListTrendingArtists(ListTrendingArtistsRequest) returns (stream ListTrendingArtistsResponse) {}
 
     // PostSong informs the CrowdSound service of a 'Song' that the client
     // has. The 'Song' may or may not have all of the fields filled or present.
-	rpc PostSong(stream PostSongRequest) returns (PostSongResponse) {}
+    rpc PostSong(stream PostSongRequest) returns (PostSongResponse) {}
 
     // VoteSong informs the CrowdSound service of a vote for a Song.
-	rpc VoteSong(VoteSongRequest) returns (VoteSongResponse) {}
+    rpc VoteSong(VoteSongRequest) returns (VoteSongResponse) {}
+}
+
+message PingRequest {
+    string user_id = 1;
+}
+
+message PingResponse {
 }
 
 message GetQueueRequest {
 }
 
 message GetQueueResponse {
-	string name = 1;
+    string name = 1;
     string artist = 2;
     string genre = 3;
-	bool isPlaying = 4;
+    bool isPlaying = 4;
 }
 
 message ListTrendingArtistsRequest {
 }
 
 message ListTrendingArtistsResponse {
-	string name = 1;
-	int32 score = 2;
+    string name = 1;
+    int32 score = 2;
 }
 
 message PostSongRequest {
-	string name = 1;
-	string artist = 2;
-	string genre = 3;
+    string user_id = 1;
+    string name = 2;
+    string artist = 3;
+    string genre = 4;
 }
 
 message PostSongResponse {
 }
 
 message VoteSongRequest {
-	string name = 1;
-	string artist = 2;
-	bool like = 3;
+    string user_id = 1;
+    string name = 2;
+    string artist = 3;
+    bool like = 4;
 }
 
 message VoteSongResponse {

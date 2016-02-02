@@ -16,12 +16,20 @@ import (
 var (
 	host    = flag.String("host", "localhost", "Hostname of the service")
 	port    = flag.Int("port", 50051, "Port of the service")
+	userID  = flag.String("user", "test_golang_user", "User ID when performing RPC calls")
 	command = flag.String("cmd", "queue", "Command to execute")
 	songs   = []*crowdsound.PostSongRequest{
 		&crowdsound.PostSongRequest{Name: "Romeo", Artist: "Taylor Swift", Genre: "Country"},
 		&crowdsound.PostSongRequest{Name: "Gay Fish", Artist: "Kanye West", Genre: "Rap"},
 	}
 )
+
+func ping(client crowdsound.CrowdSoundClient) {
+	_, err := client.Ping(context.Background(), &crowdsound.PingRequest{UserId: *userID})
+	if err != nil {
+		log.Fatalf("Error calling Ping(): %v", err)
+	}
+}
 
 func printQueue(client crowdsound.CrowdSoundClient) {
 	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
@@ -49,6 +57,7 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 	}
 
 	for _, song := range songs {
+		song.UserId = *userID
 		err := stream.Send(song)
 		if err != nil {
 			log.Fatalf("Error sending song: %v", err)
@@ -68,6 +77,9 @@ func main() {
 	c := crowdsound.NewCrowdSoundClient(conn)
 
 	switch *command {
+	case "ping":
+		ping(c)
+		break
 	case "queue":
 		printQueue(c)
 		break
