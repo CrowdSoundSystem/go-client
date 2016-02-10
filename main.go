@@ -65,6 +65,28 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 	}
 }
 
+func vote(client crowdsound.CrowdSoundClient) {
+	_, err := client.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
+		UserId: *userID,
+		Name:   songs[0].Name,
+		Artist: songs[0].Artist,
+		Like:   true,
+	})
+	if err != nil {
+		log.Fatalf("Error calling VoteSong(): %v", err)
+	}
+
+	_, err = client.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
+		UserId: *userID,
+		Name:   songs[1].Name,
+		Artist: songs[1].Artist,
+		Like:   false,
+	})
+	if err != nil {
+		log.Fatalf("Error calling VoteSong(): %v", err)
+	}
+}
+
 func main() {
 	flag.Parse()
 
@@ -85,6 +107,9 @@ func main() {
 		break
 	case "post":
 		postSongs(c)
+		break
+	case "vote":
+		vote(c)
 		break
 	default:
 		log.Println("Unrecognized command:", *command)
