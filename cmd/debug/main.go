@@ -55,6 +55,7 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 	if err != nil {
 		log.Fatalf("Error calling PostSong(): %v", err)
 	}
+	defer stream.CloseSend()
 
 	for _, song := range songs {
 		song.UserId = *userID

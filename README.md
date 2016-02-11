@@ -15,6 +15,6 @@ Since it's mostly used for hacking now, you can simply just hack away in main.go
 run:
 
 ```
-$ go run main.go -host [default=localhost] -port [default=50051] -cmd [default=queue|post]
+$ go run cmd.go -host [default=localhost] -port [default=50051] -cmd [default=queue|post|vote]
 ```
 
