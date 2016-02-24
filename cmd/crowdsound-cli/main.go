@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/crowdsoundsystem/go-client/pkg/crowdsound"
 
@@ -91,7 +92,12 @@ func vote(client crowdsound.CrowdSoundClient) {
 func main() {
 	flag.Parse()
 
-	conn, err := grpc.Dial(fmt.Sprintf("%v:%v", *host, *port), grpc.WithInsecure())
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%v:%v", *host, *port),
+		grpc.WithInsecure(),
+		grpc.WithTimeout(10*time.Second),
+	)
+
 	if err != nil {
 		log.Fatalf("unable to connect: %v", err)
 	}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option go_package = "playsource";
+
+package PlaySource;
+
+service PlaySource {
+    // QueueSong attempts to queue a song for the playsource service to play.
+    // QueueSongResponse indicates whether or not the song was queued. If the
+    // song to be queued cannot be located, QueueSong returns an RPC error.
+    rpc QueueSong(QueueSongRequest) returns (QueueSongResponse) {}
+
+    rpc GetPlaying(GetPlayingRequest) returns (GetPlayingResponse) {}
+
+    rpc GetPlayHistory(GetPlayHistoryRequest) returns (stream GetPlayHistoryResponse) {}
+}
+
+message QueueSongRequest {
+    int32 songId = 1;
+    string filename = 2;
+}
+
+message QueueSongResponse {
+    bool queued = 1;
+}
+
+message GetPlayingRequest {
+}
+
+message GetPlayingResponse {
+    int32 songId = 1;
+    string filename = 2;
+}
+
+message GetPlayHistoryRequest {
+}
+
+message GetPlayHistoryResponse {
+    int32 songId = 1;
+    string filename = 2;
+}
