@@ -20,8 +20,7 @@ var (
 	userID  = flag.String("user", "test_golang_user", "User ID when performing RPC calls")
 	command = flag.String("cmd", "queue", "Command to execute")
 	songs   = []*crowdsound.PostSongRequest{
-		&crowdsound.PostSongRequest{Name: "Romeo", Artist: "Taylor Swift", Genre: "Country"},
-		&crowdsound.PostSongRequest{Name: "Gay Fish", Artist: "Kanye West", Genre: "Rap"},
+		&crowdsound.PostSongRequest{Name: "Can't Kill Us", Artist: "The Glitch Mob", Genre: "Electronic"},
 	}
 )
 
@@ -38,6 +37,8 @@ func printQueue(client crowdsound.CrowdSoundClient) {
 		log.Fatalf("Error calling GetQueue(): %v", err)
 	}
 
+	var count int
+
 	for {
 		song, err := stream.Recv()
 		if err == io.EOF {
@@ -48,7 +49,10 @@ func printQueue(client crowdsound.CrowdSoundClient) {
 		}
 
 		log.Printf("Song: [%v] %v - %v", song.Genre, song.Artist, song.Name)
+		count++
 	}
+
+	log.Println("Queue size:", count)
 }
 
 func postSongs(client crowdsound.CrowdSoundClient) {
@@ -73,16 +77,6 @@ func vote(client crowdsound.CrowdSoundClient) {
 		Name:   songs[0].Name,
 		Artist: songs[0].Artist,
 		Like:   true,
-	})
-	if err != nil {
-		log.Fatalf("Error calling VoteSong(): %v", err)
-	}
-
-	_, err = client.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
-		UserId: *userID,
-		Name:   songs[1].Name,
-		Artist: songs[1].Artist,
-		Like:   false,
 	})
 	if err != nil {
 		log.Fatalf("Error calling VoteSong(): %v", err)
