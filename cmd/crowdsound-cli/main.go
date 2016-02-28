@@ -45,6 +45,8 @@ func printQueue(client crowdsound.CrowdSoundClient) {
 		log.Fatalf("Error calling GetQueue(): %v", err)
 	}
 
+	var count int
+
 	for {
 		song, err := stream.Recv()
 		if err == io.EOF {
@@ -59,7 +61,10 @@ func printQueue(client crowdsound.CrowdSoundClient) {
 		} else {
 			log.Printf("Song: [%v] %v - %v", song.Genre, song.Artist, song.Name)
 		}
+		count++
 	}
+
+	log.Println("Queue size:", count)
 }
 
 func postSongs(client crowdsound.CrowdSoundClient) {
