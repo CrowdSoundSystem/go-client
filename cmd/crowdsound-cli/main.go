@@ -20,8 +20,15 @@ var (
 	userID  = flag.String("user", "test_golang_user", "User ID when performing RPC calls")
 	command = flag.String("cmd", "queue", "Command to execute")
 	songs   = []*crowdsound.PostSongRequest{
-		&crowdsound.PostSongRequest{Name: "Romeo", Artist: "Taylor Swift", Genre: "Country"},
-		&crowdsound.PostSongRequest{Name: "Gay Fish", Artist: "Kanye West", Genre: "Rap"},
+		&crowdsound.PostSongRequest{Name: "Shivers", Artist: "Armin van Buuren", Genre: "Trance"},
+		&crowdsound.PostSongRequest{Name: "Games (Standerwick Remix)", Artist: "John O'Callaghan", Genre: "Trance"},
+		&crowdsound.PostSongRequest{Name: "Never Cry Again", Artist: "Dash Berlin", Genre: "Trance"},
+		// This will yield search results, but NOT be able to play, because T-swift thinks spotify will steal all of her business!
+		// Get it together, T-Swift. You could have been part of something big!
+		&crowdsound.PostSongRequest{Name: "Love Story", Artist: "Taylor Swift", Genre: "Country"},
+		// This guy, on the other hand, is a legit gangster. If he thought people were stealing
+		// from him, he'd just shoot them up. Yet, Spotify has yet to be shot...
+		&crowdsound.PostSongRequest{Name: "What You Know", Artist: "T.I.", Genre: "Phils Genre"},
 	}
 )
 
@@ -56,9 +63,10 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 	if err != nil {
 		log.Fatalf("Error calling PostSong(): %v", err)
 	}
-	defer stream.CloseSend()
+	defer stream.CloseAndRecv()
 
 	for _, song := range songs {
+		log.Println("Posting song:", song)
 		song.UserId = *userID
 		err := stream.Send(song)
 		if err != nil {
@@ -70,19 +78,9 @@ func postSongs(client crowdsound.CrowdSoundClient) {
 func vote(client crowdsound.CrowdSoundClient) {
 	_, err := client.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
 		UserId: *userID,
-		Name:   songs[0].Name,
-		Artist: songs[0].Artist,
+		Name:   songs[4].Name,
+		Artist: songs[4].Artist,
 		Like:   true,
-	})
-	if err != nil {
-		log.Fatalf("Error calling VoteSong(): %v", err)
-	}
-
-	_, err = client.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
-		UserId: *userID,
-		Name:   songs[1].Name,
-		Artist: songs[1].Artist,
-		Like:   false,
 	})
 	if err != nil {
 		log.Fatalf("Error calling VoteSong(): %v", err)
