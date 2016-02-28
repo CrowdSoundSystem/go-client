@@ -54,7 +54,11 @@ func printQueue(client crowdsound.CrowdSoundClient) {
 			log.Fatalf("Error retrieving song: %v", err)
 		}
 
-		log.Printf("Song: [%v] %v - %v", song.Genre, song.Artist, song.Name)
+		if song.IsBuffered {
+			log.Printf("Song: [%v] %v - %v (buffered)", song.Genre, song.Artist, song.Name)
+		} else {
+			log.Printf("Song: [%v] %v - %v", song.Genre, song.Artist, song.Name)
+		}
 	}
 }
 
