@@ -39,6 +39,15 @@ func ping(client crowdsound.CrowdSoundClient) {
 	}
 }
 
+func printMeta(client crowdsound.CrowdSoundClient) {
+	resp, err := client.GetSessionData(context.Background(), &crowdsound.GetSessionDataRequest{})
+	if err != nil {
+		log.Fatalf("Error calling GetSessionData(): %v", err)
+	}
+
+	log.Println("Session Data:", resp)
+}
+
 func printQueue(client crowdsound.CrowdSoundClient) {
 	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
 	if err != nil {
@@ -128,6 +137,9 @@ func main() {
 		break
 	case "vote":
 		vote(c)
+		break
+	case "meta":
+		printMeta(c)
 		break
 	default:
 		log.Println("Unrecognized command:", *command)
