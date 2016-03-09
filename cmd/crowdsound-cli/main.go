@@ -29,6 +29,7 @@ var (
 		// This guy, on the other hand, is a legit gangster. If he thought people were stealing
 		// from him, he'd just shoot them up. Yet, Spotify has yet to be shot...
 		&crowdsound.PostSongRequest{Name: "What You Know", Artist: []string{"T.I."}, Genre: "Phils Genre"},
+		&crowdsound.PostSongRequest{Name: "Test song", Genre: "Phils Genre"},
 	}
 )
 
