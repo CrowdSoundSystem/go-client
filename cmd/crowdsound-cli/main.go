@@ -48,6 +48,15 @@ func printMeta(client crowdsound.CrowdSoundClient) {
 	log.Println("Session Data:", resp)
 }
 
+func printPlaying(client crowdsound.CrowdSoundClient) {
+	resp, err := client.GetPlaying(context.Background(), &crowdsound.GetPlayingRequest{})
+	if err != nil {
+		log.Fatalf("Error calling GetPlaying(): %v", err)
+	}
+
+	log.Println("Playing:", resp)
+}
+
 func printQueue(client crowdsound.CrowdSoundClient) {
 	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
 	if err != nil {
@@ -139,6 +148,9 @@ func main() {
 	switch *command {
 	case "ping":
 		ping(c)
+		break
+	case "playing":
+		printPlaying(c)
 		break
 	case "queue":
 		printQueue(c)
