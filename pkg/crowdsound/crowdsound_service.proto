@@ -30,6 +30,9 @@ service CrowdSound {
 
     // VoteSong informs the CrowdSound service of a vote for a Song.
     rpc VoteSong(VoteSongRequest) returns (VoteSongResponse) {}
+
+    // VoteSkip votes to skip the currently playing song.
+    rpc VoteSkip(VoteSkipRequest) returns (VoteSkipResponse) {}
 }
 
 message PingRequest {
@@ -48,6 +51,7 @@ message GetSessionDataResponse {
 }
 
 message GetQueueRequest {
+    string user_id = 1;
 }
 
 message GetQueueResponse {
@@ -70,7 +74,7 @@ message ListTrendingArtistsResponse {
 message PostSongRequest {
     string user_id = 1;
     string name = 2;
-    string artist = 3;
+    repeated string artist = 3;
     string genre = 4;
 }
 
@@ -85,4 +89,11 @@ message VoteSongRequest {
 }
 
 message VoteSongResponse {
+}
+
+message VoteSkipRequest {
+    string user_id = 1;
+}
+
+message VoteSkipResponse {
 }

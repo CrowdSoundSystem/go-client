@@ -9,8 +9,11 @@ It is generated from these files:
 	pkg/playsource/playsource_service.proto
 
 It has these top-level messages:
+	Song
 	QueueSongRequest
 	QueueSongResponse
+	SkipSongRequest
+	SkipSongResponse
 	GetPlayingRequest
 	GetPlayingResponse
 	GetPlayHistoryRequest
@@ -36,24 +39,69 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 const _ = proto.ProtoPackageIsVersion1
 
+type Song struct {
+	// Crowdsound song id.
+	SongId int32 `protobuf:"varint,1,opt,name=song_id" json:"song_id,omitempty"`
+	// Song name.
+	Name string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	// Song artists.
+	Artists []string `protobuf:"bytes,3,rep,name=artists" json:"artists,omitempty"`
+}
+
+func (m *Song) Reset()                    { *m = Song{} }
+func (m *Song) String() string            { return proto.CompactTextString(m) }
+func (*Song) ProtoMessage()               {}
+func (*Song) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
 type QueueSongRequest struct {
-	SongId   int32  `protobuf:"varint,1,opt,name=songId" json:"songId,omitempty"`
-	Filename string `protobuf:"bytes,2,opt,name=filename" json:"filename,omitempty"`
+	Song *Song `protobuf:"bytes,1,opt,name=song" json:"song,omitempty"`
 }
 
 func (m *QueueSongRequest) Reset()                    { *m = QueueSongRequest{} }
 func (m *QueueSongRequest) String() string            { return proto.CompactTextString(m) }
 func (*QueueSongRequest) ProtoMessage()               {}
-func (*QueueSongRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*QueueSongRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
+func (m *QueueSongRequest) GetSong() *Song {
+	if m != nil {
+		return m.Song
+	}
+	return nil
+}
 
 type QueueSongResponse struct {
-	Queued bool `protobuf:"varint,1,opt,name=queued" json:"queued,omitempty"`
+	// The Crowdsound song in question.
+	SongId int32 `protobuf:"varint,1,opt,name=song_id" json:"song_id,omitempty"`
+	// Whether or not the song was queued. If queued == false, then
+	// the song may not have been found (found == false), or the internal
+	// queue was full (found == true).
+	Queued bool `protobuf:"varint,2,opt,name=queued" json:"queued,omitempty"`
+	// Whether or not a song was found. Will always be true if queued == true.
+	Found bool `protobuf:"varint,3,opt,name=found" json:"found,omitempty"`
+	// Whether or not the song was finished.
+	Finished bool `protobuf:"varint,4,opt,name=finished" json:"finished,omitempty"`
 }
 
 func (m *QueueSongResponse) Reset()                    { *m = QueueSongResponse{} }
 func (m *QueueSongResponse) String() string            { return proto.CompactTextString(m) }
 func (*QueueSongResponse) ProtoMessage()               {}
-func (*QueueSongResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*QueueSongResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+type SkipSongRequest struct {
+}
+
+func (m *SkipSongRequest) Reset()                    { *m = SkipSongRequest{} }
+func (m *SkipSongRequest) String() string            { return proto.CompactTextString(m) }
+func (*SkipSongRequest) ProtoMessage()               {}
+func (*SkipSongRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+type SkipSongResponse struct {
+}
+
+func (m *SkipSongResponse) Reset()                    { *m = SkipSongResponse{} }
+func (m *SkipSongResponse) String() string            { return proto.CompactTextString(m) }
+func (*SkipSongResponse) ProtoMessage()               {}
+func (*SkipSongResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
 type GetPlayingRequest struct {
 }
@@ -61,17 +109,23 @@ type GetPlayingRequest struct {
 func (m *GetPlayingRequest) Reset()                    { *m = GetPlayingRequest{} }
 func (m *GetPlayingRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetPlayingRequest) ProtoMessage()               {}
-func (*GetPlayingRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*GetPlayingRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 type GetPlayingResponse struct {
-	SongId   int32  `protobuf:"varint,1,opt,name=songId" json:"songId,omitempty"`
-	Filename string `protobuf:"bytes,2,opt,name=filename" json:"filename,omitempty"`
+	Song *Song `protobuf:"bytes,1,opt,name=song" json:"song,omitempty"`
 }
 
 func (m *GetPlayingResponse) Reset()                    { *m = GetPlayingResponse{} }
 func (m *GetPlayingResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetPlayingResponse) ProtoMessage()               {}
-func (*GetPlayingResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*GetPlayingResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+func (m *GetPlayingResponse) GetSong() *Song {
+	if m != nil {
+		return m.Song
+	}
+	return nil
+}
 
 type GetPlayHistoryRequest struct {
 }
@@ -79,74 +133,130 @@ type GetPlayHistoryRequest struct {
 func (m *GetPlayHistoryRequest) Reset()                    { *m = GetPlayHistoryRequest{} }
 func (m *GetPlayHistoryRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetPlayHistoryRequest) ProtoMessage()               {}
-func (*GetPlayHistoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*GetPlayHistoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
 type GetPlayHistoryResponse struct {
-	SongId   int32  `protobuf:"varint,1,opt,name=songId" json:"songId,omitempty"`
-	Filename string `protobuf:"bytes,2,opt,name=filename" json:"filename,omitempty"`
+	Song *Song `protobuf:"bytes,1,opt,name=song" json:"song,omitempty"`
 }
 
 func (m *GetPlayHistoryResponse) Reset()                    { *m = GetPlayHistoryResponse{} }
 func (m *GetPlayHistoryResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetPlayHistoryResponse) ProtoMessage()               {}
-func (*GetPlayHistoryResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (*GetPlayHistoryResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+
+func (m *GetPlayHistoryResponse) GetSong() *Song {
+	if m != nil {
+		return m.Song
+	}
+	return nil
+}
 
 func init() {
-	proto.RegisterType((*QueueSongRequest)(nil), "PlaySource.QueueSongRequest")
-	proto.RegisterType((*QueueSongResponse)(nil), "PlaySource.QueueSongResponse")
-	proto.RegisterType((*GetPlayingRequest)(nil), "PlaySource.GetPlayingRequest")
-	proto.RegisterType((*GetPlayingResponse)(nil), "PlaySource.GetPlayingResponse")
-	proto.RegisterType((*GetPlayHistoryRequest)(nil), "PlaySource.GetPlayHistoryRequest")
-	proto.RegisterType((*GetPlayHistoryResponse)(nil), "PlaySource.GetPlayHistoryResponse")
+	proto.RegisterType((*Song)(nil), "Playsource.Song")
+	proto.RegisterType((*QueueSongRequest)(nil), "Playsource.QueueSongRequest")
+	proto.RegisterType((*QueueSongResponse)(nil), "Playsource.QueueSongResponse")
+	proto.RegisterType((*SkipSongRequest)(nil), "Playsource.SkipSongRequest")
+	proto.RegisterType((*SkipSongResponse)(nil), "Playsource.SkipSongResponse")
+	proto.RegisterType((*GetPlayingRequest)(nil), "Playsource.GetPlayingRequest")
+	proto.RegisterType((*GetPlayingResponse)(nil), "Playsource.GetPlayingResponse")
+	proto.RegisterType((*GetPlayHistoryRequest)(nil), "Playsource.GetPlayHistoryRequest")
+	proto.RegisterType((*GetPlayHistoryResponse)(nil), "Playsource.GetPlayHistoryResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
 
-// Client API for PlaySource service
+// Client API for Playsource service
 
-type PlaySourceClient interface {
-	// QueueSong attempts to queue a song for the playsource service to play.
-	// QueueSongResponse indicates whether or not the song was queued. If the
-	// song to be queued cannot be located, QueueSong returns an RPC error.
-	QueueSong(ctx context.Context, in *QueueSongRequest, opts ...grpc.CallOption) (*QueueSongResponse, error)
+type PlaysourceClient interface {
+	// QueueSong is a bidirectional stream where callers send QueueSongRequests
+	// to queue song, and receive QueueSongResponses, which indicate whether a
+	// song was able to be queued (server queue full, not found, etc), or when
+	// a song was finished.
+	//
+	// Only one QueueSong() stream may be in progress at a given time.
+	//
+	// When a QueueSong() stream is successfully opened, the playsource resets
+	// the playback system, stopping what's playing, and clearing the queues.
+	//
+	// When a QueueSong() stream finishes, the state remains until another stream
+	// is opened.
+	//
+	// While there is an internal queue size limitation, clients are expected to
+	// have a queue size that is smaller. The internal queue size limitation is
+	// a safety measure to ensure the playback system can handle the queue.
+	QueueSong(ctx context.Context, opts ...grpc.CallOption) (Playsource_QueueSongClient, error)
+	SkipSong(ctx context.Context, in *SkipSongRequest, opts ...grpc.CallOption) (*SkipSongResponse, error)
+	// GetPlaying returns the currently playing song (if any).
 	GetPlaying(ctx context.Context, in *GetPlayingRequest, opts ...grpc.CallOption) (*GetPlayingResponse, error)
-	GetPlayHistory(ctx context.Context, in *GetPlayHistoryRequest, opts ...grpc.CallOption) (PlaySource_GetPlayHistoryClient, error)
+	// GetPlayHistory returns songs that have been played since the service has been running.
+	GetPlayHistory(ctx context.Context, in *GetPlayHistoryRequest, opts ...grpc.CallOption) (Playsource_GetPlayHistoryClient, error)
 }
 
-type playSourceClient struct {
+type playsourceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewPlaySourceClient(cc *grpc.ClientConn) PlaySourceClient {
-	return &playSourceClient{cc}
+func NewPlaysourceClient(cc *grpc.ClientConn) PlaysourceClient {
+	return &playsourceClient{cc}
 }
 
-func (c *playSourceClient) QueueSong(ctx context.Context, in *QueueSongRequest, opts ...grpc.CallOption) (*QueueSongResponse, error) {
-	out := new(QueueSongResponse)
-	err := grpc.Invoke(ctx, "/PlaySource.PlaySource/QueueSong", in, out, c.cc, opts...)
+func (c *playsourceClient) QueueSong(ctx context.Context, opts ...grpc.CallOption) (Playsource_QueueSongClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Playsource_serviceDesc.Streams[0], c.cc, "/Playsource.Playsource/QueueSong", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &playsourceQueueSongClient{stream}
+	return x, nil
+}
+
+type Playsource_QueueSongClient interface {
+	Send(*QueueSongRequest) error
+	Recv() (*QueueSongResponse, error)
+	grpc.ClientStream
+}
+
+type playsourceQueueSongClient struct {
+	grpc.ClientStream
+}
+
+func (x *playsourceQueueSongClient) Send(m *QueueSongRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *playsourceQueueSongClient) Recv() (*QueueSongResponse, error) {
+	m := new(QueueSongResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *playsourceClient) SkipSong(ctx context.Context, in *SkipSongRequest, opts ...grpc.CallOption) (*SkipSongResponse, error) {
+	out := new(SkipSongResponse)
+	err := grpc.Invoke(ctx, "/Playsource.Playsource/SkipSong", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playSourceClient) GetPlaying(ctx context.Context, in *GetPlayingRequest, opts ...grpc.CallOption) (*GetPlayingResponse, error) {
+func (c *playsourceClient) GetPlaying(ctx context.Context, in *GetPlayingRequest, opts ...grpc.CallOption) (*GetPlayingResponse, error) {
 	out := new(GetPlayingResponse)
-	err := grpc.Invoke(ctx, "/PlaySource.PlaySource/GetPlaying", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/Playsource.Playsource/GetPlaying", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *playSourceClient) GetPlayHistory(ctx context.Context, in *GetPlayHistoryRequest, opts ...grpc.CallOption) (PlaySource_GetPlayHistoryClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_PlaySource_serviceDesc.Streams[0], c.cc, "/PlaySource.PlaySource/GetPlayHistory", opts...)
+func (c *playsourceClient) GetPlayHistory(ctx context.Context, in *GetPlayHistoryRequest, opts ...grpc.CallOption) (Playsource_GetPlayHistoryClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Playsource_serviceDesc.Streams[1], c.cc, "/Playsource.Playsource/GetPlayHistory", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &playSourceGetPlayHistoryClient{stream}
+	x := &playsourceGetPlayHistoryClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -156,16 +266,16 @@ func (c *playSourceClient) GetPlayHistory(ctx context.Context, in *GetPlayHistor
 	return x, nil
 }
 
-type PlaySource_GetPlayHistoryClient interface {
+type Playsource_GetPlayHistoryClient interface {
 	Recv() (*GetPlayHistoryResponse, error)
 	grpc.ClientStream
 }
 
-type playSourceGetPlayHistoryClient struct {
+type playsourceGetPlayHistoryClient struct {
 	grpc.ClientStream
 }
 
-func (x *playSourceGetPlayHistoryClient) Recv() (*GetPlayHistoryResponse, error) {
+func (x *playsourceGetPlayHistoryClient) Recv() (*GetPlayHistoryResponse, error) {
 	m := new(GetPlayHistoryResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -173,105 +283,158 @@ func (x *playSourceGetPlayHistoryClient) Recv() (*GetPlayHistoryResponse, error)
 	return m, nil
 }
 
-// Server API for PlaySource service
+// Server API for Playsource service
 
-type PlaySourceServer interface {
-	// QueueSong attempts to queue a song for the playsource service to play.
-	// QueueSongResponse indicates whether or not the song was queued. If the
-	// song to be queued cannot be located, QueueSong returns an RPC error.
-	QueueSong(context.Context, *QueueSongRequest) (*QueueSongResponse, error)
+type PlaysourceServer interface {
+	// QueueSong is a bidirectional stream where callers send QueueSongRequests
+	// to queue song, and receive QueueSongResponses, which indicate whether a
+	// song was able to be queued (server queue full, not found, etc), or when
+	// a song was finished.
+	//
+	// Only one QueueSong() stream may be in progress at a given time.
+	//
+	// When a QueueSong() stream is successfully opened, the playsource resets
+	// the playback system, stopping what's playing, and clearing the queues.
+	//
+	// When a QueueSong() stream finishes, the state remains until another stream
+	// is opened.
+	//
+	// While there is an internal queue size limitation, clients are expected to
+	// have a queue size that is smaller. The internal queue size limitation is
+	// a safety measure to ensure the playback system can handle the queue.
+	QueueSong(Playsource_QueueSongServer) error
+	SkipSong(context.Context, *SkipSongRequest) (*SkipSongResponse, error)
+	// GetPlaying returns the currently playing song (if any).
 	GetPlaying(context.Context, *GetPlayingRequest) (*GetPlayingResponse, error)
-	GetPlayHistory(*GetPlayHistoryRequest, PlaySource_GetPlayHistoryServer) error
+	// GetPlayHistory returns songs that have been played since the service has been running.
+	GetPlayHistory(*GetPlayHistoryRequest, Playsource_GetPlayHistoryServer) error
 }
 
-func RegisterPlaySourceServer(s *grpc.Server, srv PlaySourceServer) {
-	s.RegisterService(&_PlaySource_serviceDesc, srv)
+func RegisterPlaysourceServer(s *grpc.Server, srv PlaysourceServer) {
+	s.RegisterService(&_Playsource_serviceDesc, srv)
 }
 
-func _PlaySource_QueueSong_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
-	in := new(QueueSongRequest)
+func _Playsource_QueueSong_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(PlaysourceServer).QueueSong(&playsourceQueueSongServer{stream})
+}
+
+type Playsource_QueueSongServer interface {
+	Send(*QueueSongResponse) error
+	Recv() (*QueueSongRequest, error)
+	grpc.ServerStream
+}
+
+type playsourceQueueSongServer struct {
+	grpc.ServerStream
+}
+
+func (x *playsourceQueueSongServer) Send(m *QueueSongResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *playsourceQueueSongServer) Recv() (*QueueSongRequest, error) {
+	m := new(QueueSongRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Playsource_SkipSong_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
+	in := new(SkipSongRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
-	out, err := srv.(PlaySourceServer).QueueSong(ctx, in)
+	out, err := srv.(PlaysourceServer).SkipSong(ctx, in)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func _PlaySource_GetPlaying_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
+func _Playsource_GetPlaying_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error) (interface{}, error) {
 	in := new(GetPlayingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
-	out, err := srv.(PlaySourceServer).GetPlaying(ctx, in)
+	out, err := srv.(PlaysourceServer).GetPlaying(ctx, in)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func _PlaySource_GetPlayHistory_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Playsource_GetPlayHistory_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(GetPlayHistoryRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(PlaySourceServer).GetPlayHistory(m, &playSourceGetPlayHistoryServer{stream})
+	return srv.(PlaysourceServer).GetPlayHistory(m, &playsourceGetPlayHistoryServer{stream})
 }
 
-type PlaySource_GetPlayHistoryServer interface {
+type Playsource_GetPlayHistoryServer interface {
 	Send(*GetPlayHistoryResponse) error
 	grpc.ServerStream
 }
 
-type playSourceGetPlayHistoryServer struct {
+type playsourceGetPlayHistoryServer struct {
 	grpc.ServerStream
 }
 
-func (x *playSourceGetPlayHistoryServer) Send(m *GetPlayHistoryResponse) error {
+func (x *playsourceGetPlayHistoryServer) Send(m *GetPlayHistoryResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-var _PlaySource_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "PlaySource.PlaySource",
-	HandlerType: (*PlaySourceServer)(nil),
+var _Playsource_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "Playsource.Playsource",
+	HandlerType: (*PlaysourceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "QueueSong",
-			Handler:    _PlaySource_QueueSong_Handler,
+			MethodName: "SkipSong",
+			Handler:    _Playsource_SkipSong_Handler,
 		},
 		{
 			MethodName: "GetPlaying",
-			Handler:    _PlaySource_GetPlaying_Handler,
+			Handler:    _Playsource_GetPlaying_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
+			StreamName:    "QueueSong",
+			Handler:       _Playsource_QueueSong_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
 			StreamName:    "GetPlayHistory",
-			Handler:       _PlaySource_GetPlayHistory_Handler,
+			Handler:       _Playsource_GetPlayHistory_Handler,
 			ServerStreams: true,
 		},
 	},
 }
 
 var fileDescriptor0 = []byte{
-	// 260 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x52, 0x2f, 0xc8, 0x4e, 0xd7,
-	0x2f, 0xc8, 0x49, 0xac, 0x2c, 0xce, 0x2f, 0x2d, 0x4a, 0x4e, 0x45, 0x62, 0xc6, 0x17, 0xa7, 0x16,
-	0x95, 0x65, 0x26, 0xa7, 0xea, 0x15, 0x14, 0xe5, 0x97, 0xe4, 0x0b, 0x71, 0x05, 0x00, 0x65, 0x82,
-	0xc1, 0x32, 0x4a, 0x26, 0x5c, 0x02, 0x81, 0xa5, 0xa9, 0xa5, 0xa9, 0xc1, 0xf9, 0x79, 0xe9, 0x41,
-	0xa9, 0x85, 0xa5, 0xa9, 0xc5, 0x25, 0x42, 0x7c, 0x5c, 0x6c, 0xc5, 0x40, 0xae, 0x67, 0x8a, 0x04,
-	0xa3, 0x02, 0xa3, 0x06, 0xab, 0x90, 0x00, 0x17, 0x47, 0x5a, 0x66, 0x4e, 0x6a, 0x5e, 0x62, 0x6e,
-	0xaa, 0x04, 0x13, 0x50, 0x84, 0x53, 0x49, 0x99, 0x4b, 0x10, 0x49, 0x57, 0x71, 0x41, 0x7e, 0x5e,
-	0x71, 0x2a, 0x48, 0x5b, 0x21, 0x48, 0x10, 0xa2, 0x8d, 0x43, 0x49, 0x98, 0x4b, 0xd0, 0x3d, 0xb5,
-	0x04, 0x64, 0x57, 0x26, 0xdc, 0x6c, 0x25, 0x33, 0x2e, 0x21, 0x64, 0x41, 0x84, 0x56, 0x02, 0x36,
-	0x8a, 0x73, 0x89, 0x42, 0xf5, 0x79, 0x64, 0x16, 0x97, 0xe4, 0x17, 0x55, 0xc2, 0x0c, 0xb4, 0xe2,
-	0x12, 0x43, 0x97, 0x20, 0xd6, 0x50, 0xa3, 0x16, 0x26, 0x2e, 0xa4, 0xb0, 0x10, 0xf2, 0xe2, 0xe2,
-	0x84, 0xfb, 0x4a, 0x48, 0x46, 0x0f, 0x21, 0xa3, 0x87, 0x1e, 0x44, 0x52, 0xb2, 0x38, 0x64, 0x21,
-	0x56, 0x2b, 0x31, 0x08, 0xf9, 0x72, 0x71, 0x21, 0xfc, 0x29, 0x84, 0xa2, 0x1c, 0x23, 0x50, 0xa4,
-	0xe4, 0x70, 0x49, 0xc3, 0x8d, 0x8b, 0xe6, 0xe2, 0x43, 0xf5, 0xa5, 0x90, 0x22, 0x16, 0x3d, 0xa8,
-	0x41, 0x23, 0xa5, 0x84, 0x4f, 0x09, 0xcc, 0x68, 0x03, 0x46, 0x27, 0x9e, 0x28, 0x2e, 0x44, 0x5a,
-	0x49, 0x62, 0x03, 0x27, 0x12, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x7a, 0x73, 0xd5, 0xae,
-	0x4f, 0x02, 0x00, 0x00,
+	// 350 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x8c, 0x53, 0x4d, 0x4f, 0xc2, 0x40,
+	0x10, 0xb5, 0x50, 0x10, 0x46, 0x84, 0x32, 0x46, 0x25, 0x15, 0x09, 0xee, 0x45, 0x4e, 0x48, 0xd0,
+	0x18, 0xcf, 0x5e, 0xf0, 0xa2, 0x51, 0x89, 0x17, 0x3d, 0x10, 0x84, 0x05, 0x37, 0x68, 0xb7, 0x74,
+	0x5b, 0x13, 0x7e, 0xa6, 0xff, 0xc8, 0x6e, 0xed, 0xc7, 0x96, 0x0f, 0xf5, 0xd4, 0xee, 0xbc, 0x37,
+	0xef, 0xcd, 0xbc, 0x76, 0xe1, 0xd4, 0x9e, 0x4d, 0xcf, 0xec, 0xf7, 0xe1, 0x42, 0x70, 0xcf, 0x19,
+	0x51, 0xe5, 0x75, 0x20, 0xa8, 0xf3, 0xc9, 0x46, 0xb4, 0x6d, 0x3b, 0xdc, 0xe5, 0x08, 0xf7, 0x31,
+	0x42, 0x2e, 0x41, 0xef, 0x73, 0x6b, 0x8a, 0x15, 0xd8, 0x16, 0xfe, 0x73, 0xc0, 0xc6, 0x35, 0xad,
+	0xa9, 0xb5, 0x72, 0x58, 0x02, 0xdd, 0x1a, 0x7e, 0xd0, 0x5a, 0xc6, 0x3f, 0x15, 0x25, 0x3c, 0x74,
+	0x5c, 0x26, 0x5c, 0x51, 0xcb, 0x36, 0xb3, 0xad, 0x22, 0xe9, 0x82, 0xf1, 0xe0, 0x51, 0x8f, 0xca,
+	0xe6, 0x47, 0x3a, 0xf7, 0xa8, 0x70, 0xb1, 0x01, 0xba, 0xd4, 0x08, 0x04, 0x76, 0xba, 0x46, 0x3b,
+	0xb1, 0x69, 0x4b, 0x1a, 0x79, 0x82, 0xaa, 0xd2, 0x23, 0x6c, 0x6e, 0x09, 0xba, 0x6a, 0x5c, 0x86,
+	0xfc, 0x5c, 0xb2, 0xc6, 0x81, 0x75, 0x01, 0x77, 0x21, 0x37, 0xe1, 0x9e, 0x35, 0xf6, 0x8d, 0xe5,
+	0xd1, 0x80, 0xc2, 0x84, 0x59, 0x4c, 0xbc, 0xf9, 0x04, 0x5d, 0x56, 0x48, 0x15, 0x2a, 0xfd, 0x19,
+	0xb3, 0x95, 0x49, 0x08, 0x82, 0x91, 0x94, 0x7e, 0x8c, 0xc8, 0x1e, 0x54, 0x7b, 0xd4, 0x95, 0x33,
+	0xb1, 0x84, 0x78, 0x01, 0xa8, 0x16, 0xc3, 0x99, 0xfe, 0x5a, 0xe4, 0x10, 0xf6, 0xc3, 0xae, 0x1b,
+	0x3f, 0x12, 0xee, 0x2c, 0x22, 0xb9, 0x2b, 0x38, 0x58, 0x06, 0xfe, 0x27, 0xd9, 0xfd, 0xca, 0x80,
+	0xf2, 0x59, 0xf0, 0x0e, 0x8a, 0x71, 0x54, 0x58, 0x57, 0xd9, 0xcb, 0xa9, 0x9b, 0xc7, 0x1b, 0xd0,
+	0x70, 0xed, 0xad, 0x96, 0xd6, 0xd1, 0xb0, 0x07, 0x85, 0x28, 0x10, 0x3c, 0x4a, 0x99, 0xa7, 0x93,
+	0x33, 0xeb, 0xeb, 0xc1, 0x48, 0x0c, 0x6f, 0x01, 0x92, 0xc0, 0x30, 0xe5, 0xbd, 0x92, 0xae, 0xd9,
+	0xd8, 0x04, 0xc7, 0x72, 0x2f, 0x50, 0x4e, 0x07, 0x86, 0x27, 0x6b, 0x7a, 0xd2, 0x29, 0x9b, 0xe4,
+	0x37, 0x4a, 0x24, 0xdd, 0xd1, 0xae, 0x4b, 0xcf, 0x90, 0xdc, 0x81, 0xd7, 0x7c, 0xf0, 0xf3, 0x9f,
+	0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0xb5, 0x0a, 0xed, 0xcc, 0x27, 0x03, 0x00, 0x00,
 }

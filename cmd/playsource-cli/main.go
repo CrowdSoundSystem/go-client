@@ -16,33 +16,30 @@ import (
 var (
 	host     = flag.String("host", "localhost", "Hostname of the service")
 	port     = flag.Int("port", 50052, "Port of the service")
-	command  = flag.String("cmd", "history", "Command to execute [queue, history, playing]")
+	command  = flag.String("cmd", "history", "Command to execute [history, playing, skip]")
 	filename = flag.String("filename", "", "File to queue (only valid for queue command")
 	songID   = flag.Int("songID", 0, "SongID of the song being queued (only valid for queue command)")
 )
 
-func queueSong(client playsource.PlaySourceClient) {
-	resp, err := client.QueueSong(context.Background(), &playsource.QueueSongRequest{
-		SongId:   int32(*songID),
-		Filename: *filename,
-	})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Printf("Queued: %t", resp.Queued)
-}
-
-func playing(client playsource.PlaySourceClient) {
+func playing(client playsource.PlaysourceClient) {
 	resp, err := client.GetPlaying(context.Background(), &playsource.GetPlayingRequest{})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Playing: [%v] %v", resp.SongId, resp.Filename)
+	log.Printf("Playing: [%v] %v", resp.Song)
 }
-func history(client playsource.PlaySourceClient) {
+
+func skipSong(client playsource.PlaysourceClient) {
+	_, err := client.SkipSong(context.Background(), &playsource.SkipSongRequest{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Skipped song")
+}
+
+func history(client playsource.PlaysourceClient) {
 	stream, err := client.GetPlayHistory(context.Background(), &playsource.GetPlayHistoryRequest{})
 	if err != nil {
 		log.Fatal(err)
@@ -57,7 +54,7 @@ func history(client playsource.PlaySourceClient) {
 			log.Fatal("Error retrieving history:", err)
 		}
 
-		log.Printf("Song: [%v] %v", song.SongId, song.Filename)
+		log.Println("Song:", song)
 	}
 }
 
@@ -70,18 +67,17 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := playsource.NewPlaySourceClient(conn)
+	c := playsource.NewPlaysourceClient(conn)
 
 	switch *command {
-	case "queue":
-		queueSong(c)
-		break
 	case "history":
 		history(c)
 		break
 	case "playing":
 		playing(c)
 		break
+	case "skip":
+		skipSong(c)
 	default:
 		log.Println("Unrecognized command:", *command)
 	}

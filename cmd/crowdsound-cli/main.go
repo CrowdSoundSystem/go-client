@@ -18,17 +18,17 @@ var (
 	host    = flag.String("host", "localhost", "Hostname of the service")
 	port    = flag.Int("port", 50051, "Port of the service")
 	userID  = flag.String("user", "test_golang_user", "User ID when performing RPC calls")
-	command = flag.String("cmd", "queue", "Command to execute")
+	command = flag.String("cmd", "queue", "Command to execute [ping, queue, post, vote, voteSkip, meta]")
 	songs   = []*crowdsound.PostSongRequest{
-		&crowdsound.PostSongRequest{Name: "Shivers", Artist: "Armin van Buuren", Genre: "Trance"},
-		&crowdsound.PostSongRequest{Name: "Games (Standerwick Remix)", Artist: "John O'Callaghan", Genre: "Trance"},
-		&crowdsound.PostSongRequest{Name: "Never Cry Again", Artist: "Dash Berlin", Genre: "Trance"},
+		&crowdsound.PostSongRequest{Name: "Shivers", Artist: []string{"Armin van Buuren"}, Genre: "Trance"},
+		&crowdsound.PostSongRequest{Name: "Games (Standerwick Remix)", Artist: []string{"John O'Callaghan"}, Genre: "Trance"},
 		// This will yield search results, but NOT be able to play, because T-swift thinks spotify will steal all of her business!
 		// Get it together, T-Swift. You could have been part of something big!
-		&crowdsound.PostSongRequest{Name: "Love Story", Artist: "Taylor Swift", Genre: "Country"},
+		&crowdsound.PostSongRequest{Name: "Love Story", Artist: []string{"Taylor Swift"}, Genre: "Country"},
+		&crowdsound.PostSongRequest{Name: "Never Cry Again", Artist: []string{"Dash Berlin"}, Genre: "Trance"},
 		// This guy, on the other hand, is a legit gangster. If he thought people were stealing
 		// from him, he'd just shoot them up. Yet, Spotify has yet to be shot...
-		&crowdsound.PostSongRequest{Name: "What You Know", Artist: "T.I.", Genre: "Phils Genre"},
+		&crowdsound.PostSongRequest{Name: "What You Know", Artist: []string{"T.I."}, Genre: "Phils Genre"},
 	}
 )
 
@@ -101,12 +101,23 @@ func vote(client crowdsound.CrowdSoundClient) {
 	_, err := client.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
 		UserId: *userID,
 		Name:   songs[4].Name,
-		Artist: songs[4].Artist,
+		Artist: songs[4].Artist[0],
 		Like:   true,
 	})
 	if err != nil {
 		log.Fatalf("Error calling VoteSong(): %v", err)
 	}
+}
+
+func voteSkip(client crowdsound.CrowdSoundClient) {
+	_, err := client.VoteSkip(context.Background(), &crowdsound.VoteSkipRequest{
+		UserId: *userID,
+	})
+	if err != nil {
+		log.Fatalf("Error calling VoteSkip(): %v", err)
+	}
+
+	log.Println("Voted for skip")
 }
 
 func main() {
@@ -138,6 +149,8 @@ func main() {
 	case "vote":
 		vote(c)
 		break
+	case "voteSkip":
+		voteSkip(c)
 	case "meta":
 		printMeta(c)
 		break
