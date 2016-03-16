@@ -59,7 +59,9 @@ func printPlaying(client crowdsound.CrowdSoundClient) {
 }
 
 func printQueue(client crowdsound.CrowdSoundClient) {
-	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{})
+	stream, err := client.GetQueue(context.Background(), &crowdsound.GetQueueRequest{
+		UserId: *userID,
+	})
 	if err != nil {
 		log.Fatalf("Error calling GetQueue(): %v", err)
 	}

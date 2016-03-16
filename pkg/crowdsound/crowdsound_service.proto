@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-option java_package = "ex.grpc";
 option objc_class_prefix = "CS";
 option go_package = "crowdsound";
 
@@ -12,6 +11,7 @@ service CrowdSound {
     // alive and connected.
     rpc Ping(PingRequest) returns (PingResponse) {}
 
+    // GetSessionData returns data about the session.
     rpc GetSessionData(GetSessionDataRequest) returns (GetSessionDataResponse) {}
 
     // GetPlaying returns the current song that is playing.
@@ -34,6 +34,9 @@ service CrowdSound {
     // VoteSong informs the CrowdSound service of a vote for a Song.
     rpc VoteSong(VoteSongRequest) returns (VoteSongResponse) {}
 
+    // VoteArtist informs the CrowdSound service of a vote for a Song.
+    rpc VoteArtist(VoteArtistRequest) returns (VoteArtistResponse) {}
+
     // VoteSkip votes to skip the currently playing song.
     rpc VoteSkip(VoteSkipRequest) returns (VoteSkipResponse) {}
 }
@@ -54,6 +57,7 @@ message GetSessionDataResponse {
 }
 
 message GetPlayingRequest {
+    string user_id = 1;
 }
 
 message GetPlayingResponse {
@@ -101,6 +105,15 @@ message VoteSongRequest {
 }
 
 message VoteSongResponse {
+}
+
+message VoteArtistRequest {
+    string user_id = 1;
+    string artist = 2;
+    bool like = 3;
+}
+
+message VoteArtistResponse {
 }
 
 message VoteSkipRequest {
