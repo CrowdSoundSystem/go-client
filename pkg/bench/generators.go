@@ -17,7 +17,7 @@ func songGenerator(amount int, duplicateRate float64) <-chan *crowdsound.PostSon
 	// Let's arbitrarily make 10% of songs non-unique
 	duplicateSong := &crowdsound.PostSongRequest{
 		Name:   "Random",
-		Artist: "Creator",
+		Artist: []string{"Creator"},
 		Genre:  "Transcending",
 	}
 
@@ -28,7 +28,7 @@ func songGenerator(amount int, duplicateRate float64) <-chan *crowdsound.PostSon
 			} else {
 				out <- &crowdsound.PostSongRequest{
 					Name:   randomString(10),
-					Artist: randomString(5),
+					Artist: []string{randomString(5)},
 					Genre:  genres[i%len(genres)],
 				}
 			}

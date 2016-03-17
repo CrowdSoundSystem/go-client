@@ -77,7 +77,7 @@ func RunVoteSongsBench(c crowdsound.CrowdSoundClient, amount int) (metrics.Histo
 		_, err := c.VoteSong(context.Background(), &crowdsound.VoteSongRequest{
 			UserId: userID,
 			Name:   songToVote.Name,
-			Artist: songToVote.Artist,
+			Artist: songToVote.Artist[0],
 			Like:   true,
 		})
 		if err != nil {
